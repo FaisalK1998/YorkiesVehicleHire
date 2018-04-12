@@ -7,7 +7,7 @@ namespace YorkiesVehicleHire.Models
 
         //Display attribute specifies what to display for the name of the field
         //DataType attribute specifies the type of data
-
+        //Required attribute specifies that a field is required
 
         //Forename variable with DisplayAttribute and RequiredAttribute
         [Display(Name = "Forename"), Required]
