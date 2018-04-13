@@ -199,6 +199,7 @@
     <Compile Include="Models\Booking.cs" />
     <Compile Include="Models\BookingClerk.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\InvoiceClerk.cs" />
     <Compile Include="Models\Manager.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
