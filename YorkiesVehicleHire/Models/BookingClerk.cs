@@ -13,5 +13,6 @@ namespace YorkiesVehicleHire.Models
         [Display(Name = "User ID"), Required]
         public int UserID { get; set; }
 
+        public BookingClerk() { }
     }
 }
