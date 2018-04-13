@@ -52,5 +52,6 @@ namespace YorkiesVehicleHire.Models
         [Required]
         public decimal HirePrice { get; set; }
 
+        public Vehicle() { }
     }
 }
