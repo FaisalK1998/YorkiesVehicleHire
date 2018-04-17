@@ -19,22 +19,22 @@ namespace YorkiesVehicleHire
         public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            await configSendGridasync(message);
+            await ConfigSendGridAsync(message);
         }
         
-        private async Task configSendGridasync(IdentityMessage message)
+        private async Task ConfigSendGridAsync(IdentityMessage message)
         {
             var myMessage = new SendGridMessage();
             myMessage.AddTo(message.Destination);
-            myMessage.From = new System.Net.Mail.MailAddress("Joe@contoso.com", "Joe S.");
+            myMessage.From = new System.Net.Mail.MailAddress("YorkiesVehicleHire@gmail.com", "Yorkies Vehicle Hire");
             myMessage.Subject = message.Subject;
             myMessage.Text = message.Body;
             myMessage.Html = message.Body;
 
             var credentials = new NetworkCredential(
-           ConfigurationManager.AppSettings["mailAccount"],
-           ConfigurationManager.AppSettings["mailPassword"]
-           );
+            ConfigurationManager.AppSettings["mailAccount"],
+            ConfigurationManager.AppSettings["mailPassword"]
+            );
 
             // Create a Web transport for sending email.
             var transportWeb = new Web(credentials);
