@@ -79,7 +79,11 @@ namespace YorkiesVehicleHire.Controllers
             {
                 if(!await UserManager.IsEmailConfirmedAsync(user.Id))
                 {
-                    ViewBag.errorMessage = "You must have a confirmed email to log on.";
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account - Resend");
+
+                    ViewBag.Link = callbackUrl;
+                    ViewBag.errorMessage = "You must have a confirmed email to log on. "
+                                         + "The confirmation email has been resent to your account.";
                     return View("Error");
                 }
             }
@@ -169,15 +173,8 @@ namespace YorkiesVehicleHire.Controllers
                     //The following line has been commented to prevent log in until the user is confirmed
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                        new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id,
-                        "Confirm your account", "Please confirm your account by clicking <a href=\""
-                        + callbackUrl + "\">here</a>");
-
-                    //Debug the application and test registration without sending email
-                    TempData["ViewBagLink"] = callbackUrl;
+                    //Uses helper method 
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
                     //Displays the confirm instructions
                     ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
@@ -502,5 +499,17 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
         #endregion
+
+        //Helper method to send confirmation email again to the user if needed
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject,
+                "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
+        }
     }
 }
