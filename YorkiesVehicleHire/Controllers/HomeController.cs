@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace YorkiesVehicleHire.Controllers
 {
+    [AllowAnonymous]
     [RequireHttps]  //This attribute forces all requests to use HTTPS
     public class HomeController : Controller
     {
