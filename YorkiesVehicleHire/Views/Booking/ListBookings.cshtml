@@ -1,0 +1,19 @@
+﻿@model YorkiesVehicleHire.Models.ListBookingsViewModel
+@{
+    ViewBag.Title = "ListBookings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Your Bookings</h1>
+
+<div class="row">
+
+    @if (Model != null && Model.Bookings.Any())
+    {
+        @Html.DisplayFor(b => b.Bookings)
+    }
+    else
+    {
+        <div class="col-md-4 col-sm-6 col-xs-12">You have not made any bookings</div>
+    }
+</div>

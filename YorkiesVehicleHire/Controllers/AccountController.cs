@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -63,6 +60,12 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/Login
+        /// <summary>
+        /// Logs in the user if they have confirmed their email
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -73,7 +76,7 @@ namespace YorkiesVehicleHire.Controllers
                 return View(model);
             }
 
-            //Require the user to have confirmed email before they can log on
+            //Require the user to have confirmed email before they can log in
             var user = await UserManager.FindByNameAsync(model.Email);
             if(user != null)
             {
@@ -159,6 +162,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/Register
+        /// <summary>
+        /// Registers the user and sends email verification 
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>ActionResult</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -166,7 +174,7 @@ namespace YorkiesVehicleHire.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name, MobilePhoneNo = model.MobilePhoneNo, DrivingLicenceNo = model.DrivingLicenceNo  };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -185,7 +193,6 @@ namespace YorkiesVehicleHire.Controllers
                 }
                 AddErrors(result);
             }
-
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -501,6 +508,12 @@ namespace YorkiesVehicleHire.Controllers
         #endregion
 
         //Helper method to send confirmation email again to the user if needed
+        /// <summary>
+        /// send email confirmation token as an asynchronous operation.
+        /// </summary>
+        /// <param name="userID">The user identifier.</param>
+        /// <param name="subject">The subject.</param>
+        /// <returns>Task&lt;System.String&gt;.</returns>
         private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
         {
             string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);

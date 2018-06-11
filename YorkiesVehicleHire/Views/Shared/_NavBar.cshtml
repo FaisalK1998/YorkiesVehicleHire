@@ -10,15 +10,43 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                @if (Request.IsAuthenticated)
+                @if (Request.IsAuthenticated && User.IsInRole("Member"))
                     {
-                            <li>@Html.ActionLink("Hire A Vehicle", "Index", "Rentals")</li>
-                            <li>@Html.ActionLink("My Bookings", "Index", "Customers")</li>
-                            <li>@Html.ActionLink("My Account", "Index", "Account")</li>
+                            <li>@Html.ActionLink("Hire A Vehicle", "MakeBooking", "Booking")</li>
+                            <li>@Html.ActionLink("My Bookings", "ListBookings", "Booking")</li>
+                            <li>@Html.ActionLink("My Account", "Index", "Manage")</li>
                     }
-                <li>@Html.ActionLink("About", "About", "Home")</li>
-                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                @if (Request.IsAuthenticated && User.IsInRole("Manager"))
+                {
+
+                            <li>@Html.ActionLink("Create New User", "Create", "Staff")</li>
+                            <li>@Html.ActionLink("View All Bookings", "ListBookings", "Booking")</li>
+                }
+
+                @if (Request.IsAuthenticated && User.IsInRole("BookingClerk"))
+                {
+                            <li>@Html.ActionLink("Customer Information", "CustomerInfo", "Staff")</li>
+                            <li>@Html.ActionLink("Booking Information", "BookingInfo", "Staff")</li>
+                            <li>@Html.ActionLink("Vehicle Information", "VehicleInfo", "Staff")</li>
+                            <li>@Html.ActionLink("Produce Reports", "Reports", "Staff")</li>
+                }
+
+                @if (Request.IsAuthenticated && User.IsInRole("InvoiceClerk"))
+                {
+                            <li>@Html.ActionLink("Customer Information", "CustomerInfo", "Staff")</li>
+                            <li>@Html.ActionLink("Booking Information", "BookingInfo", "Staff")</li>
+                            <li>@Html.ActionLink("Produce Invoice", "Invoice", "Staff")</li>
+                            <li>@Html.ActionLink("Produce Reports", "Reports", "Staff")</li>
+                }
+
+                else
+                {
+                            <li>@Html.ActionLink("About", "About", "Home")</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                }
+
             </ul>
+
             @Html.Partial("_LoginPartial")
         </div>
     </div>

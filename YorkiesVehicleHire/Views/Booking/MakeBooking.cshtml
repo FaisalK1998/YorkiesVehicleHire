@@ -1,0 +1,84 @@
+﻿@model YorkiesVehicleHire.Models.BookingsViewModels.MakeBookingViewModel
+
+@{
+    ViewBag.Title = "MakeBooking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Make Booking</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <hr />
+    <div class="form-horizontal">
+        <i>
+            You are about to make a booking under the name of the owner of the account:
+            <b>@User.Identity.Name</b><br />
+            Please make sure this is correct, and that you are signed in with the right account.
+        </i>
+        <hr />
+        <br />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BookingStartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" />
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BookingEndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.VehicleCategories, "Vehicle Category", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.VehicleCategories, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.VehicleCategories, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.Vehicles, "Vehicle", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Vehicles, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Vehicles, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        @*
+        <div class="form-group">
+            @Html.LabelFor(model => model.Vehicles, "Vehicle Categories", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.VehicleCategories,
+                    Model.VehicleCategories.Select(m => new SelectListItem
+                    {
+                     Value = m.VehicleCategoryID.ToString(),
+                     Text = m.VehicleCategoryCode
+                    }),
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.VehicleCategories, "", new { @class = "text-danger" })
+            </div>
+        </div>
+            *@
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Confirm and Pay" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+
+    <div>
+        @Html.ActionLink("Back", "Index", "Home")
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+}

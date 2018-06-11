@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using YorkiesVehicleHire.Extensions;
 using YorkiesVehicleHire.Models;
 
 namespace YorkiesVehicleHire.Controllers
@@ -75,29 +76,87 @@ namespace YorkiesVehicleHire.Controllers
             return View(model);
         }
 
+        // GET: /Manage/EditDetails
+        //Retrieves the edit details page and passes the users current details through the model
+        public async Task<ActionResult> EditDetails(string id)
+        {
+            if (id == null)
+            {
+                id = User.Identity.GetUserId();
+            }
+            var model = await UserManager.FindByIdAsync(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        //Retrieves the updated details throught model and updates the users details using model
+        public async Task<ActionResult> EditDetails(ApplicationUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await UserManager.FindByIdAsync(model.Id);
+                user.Name = model.Name;
+                user.Email = model.Email;
+                user.MobilePhoneNo = model.MobilePhoneNo;
+                user.DrivingLicenceNo = model.DrivingLicenceNo;
+
+                var result = await UserManager.UpdateAsync(user);
+                //Returns the user to the homepage and displays a success message
+                if (result.Succeeded)
+                {
+                    this.AddNotification("Your Details Have Been Updated Successfully", NotificationType.SUCCESS);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            //If editing the users details fails returns the user to the edit details page and displays an error message 
+            this.AddNotification("Your Details Could Not Be Update Please Try Again Later", NotificationType.ERROR);
+            return View(model);
+        }
+
+        // GET: /Manage/RemoveLogin
+        //Retrieves the remove login page and passes the users current details through the model
+        public async Task<ActionResult> RemoveLogin(string id)
+        {
+            if (id == null)
+            {
+                id = User.Identity.GetUserId();
+            }
+            var model = await UserManager.FindByIdAsync(id);
+            return View(model);
+        }
+
         //
         // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
+        public async Task<ActionResult> RemoveLogin(ApplicationUser model)
         {
-            ManageMessageId? message;
-            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
-            if (result.Succeeded)
+            if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
+                var user = await UserManager.FindByIdAsync(model.Id);
+                user.Email = model.Email;
+
+                var result = await UserManager.DeleteAsync(user);
+
+                //Returns the user to the homepage and displays a success message
+                if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    ApplicationDbContext db = new ApplicationDbContext();
+                    db.Users.Remove(user);
+                    db.SaveChanges();
+
+                    this.AddNotification("Your Account Has Been Removed Successfully", NotificationType.SUCCESS);
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    return RedirectToAction("Index", "Home");
                 }
-                message = ManageMessageId.RemoveLoginSuccess;
             }
-            else
-            {
-                message = ManageMessageId.Error;
-            }
-            return RedirectToAction("ManageLogins", new { Message = message });
+
+            //If editing the users details fails returns the user to the edit details page and displays an error message 
+            this.AddNotification("Your Account Could Not Be Removed. Please Try Again Later", NotificationType.ERROR);
+            return View(model);
         }
+
 
         //
         // GET: /Manage/AddPhoneNumber
