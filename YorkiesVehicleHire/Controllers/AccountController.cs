@@ -1,4 +1,17 @@
-﻿using System.Linq;
+﻿// ***********************************************************************
+// Assembly         : YorkiesVehicleHire
+// Author           : Faisal
+// Created          : 06-03-2018
+//
+// Last Modified By : Faisal
+// Last Modified On : 06-10-2018
+// ***********************************************************************
+// <copyright file="AccountController.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -9,22 +22,44 @@ using YorkiesVehicleHire.Models;
 
 namespace YorkiesVehicleHire.Controllers
 {
+    /// <summary>
+    /// Class AccountController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [Authorize]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// The sign in manager
+        /// </summary>
         private ApplicationSignInManager _signInManager;
+        /// <summary>
+        /// The user manager
+        /// </summary>
         private ApplicationUserManager _userManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
         public AccountController()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="userManager">The user manager.</param>
+        /// <param name="signInManager">The sign in manager.</param>
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
+        /// <summary>
+        /// Gets the sign in manager.
+        /// </summary>
+        /// <value>The sign in manager.</value>
         public ApplicationSignInManager SignInManager
         {
             get
@@ -37,6 +72,10 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets the user manager.
+        /// </summary>
+        /// <value>The user manager.</value>
         public ApplicationUserManager UserManager
         {
             get
@@ -51,6 +90,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/Login
+        /// <summary>
+        /// Logins the specified return URL.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -111,6 +155,13 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/VerifyCode
+        /// <summary>
+        /// Verifies the code.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <param name="rememberMe">if set to <c>true</c> [remember me].</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -124,6 +175,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/VerifyCode
+        /// <summary>
+        /// Verifies the code.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -154,6 +210,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/Register
+        /// <summary>
+        /// Registers this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult Register()
         {
@@ -163,7 +223,7 @@ namespace YorkiesVehicleHire.Controllers
         //
         // POST: /Account/Register
         /// <summary>
-        /// Registers the user and sends email verification 
+        /// Registers the user and sends email verification
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns>ActionResult</returns>
@@ -199,6 +259,12 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ConfirmEmail
+        /// <summary>
+        /// Confirms the email.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="code">The code.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -212,6 +278,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ForgotPassword
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -220,6 +290,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/ForgotPassword
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -248,6 +323,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ForgotPasswordConfirmation
+        /// <summary>
+        /// Forgots the password confirmation.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
@@ -256,6 +335,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ResetPassword
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
@@ -264,6 +348,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/ResetPassword
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -290,6 +379,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ResetPasswordConfirmation
+        /// <summary>
+        /// Resets the password confirmation.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
@@ -298,6 +391,12 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/ExternalLogin
+        /// <summary>
+        /// Externals the login.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>ActionResult.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -309,6 +408,12 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/SendCode
+        /// <summary>
+        /// Sends the code.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <param name="rememberMe">if set to <c>true</c> [remember me].</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
@@ -324,6 +429,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/SendCode
+        /// <summary>
+        /// Sends the code.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -344,6 +454,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
+        /// <summary>
+        /// Externals the login callback.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -374,6 +489,12 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/ExternalLoginConfirmation
+        /// <summary>
+        /// Externals the login confirmation.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -412,6 +533,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Account/LogOff
+        /// <summary>
+        /// Logs the off.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
@@ -422,12 +547,20 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Account/ExternalLoginFailure
+        /// <summary>
+        /// Externals the login failure.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
             return View();
         }
 
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -450,8 +583,15 @@ namespace YorkiesVehicleHire.Controllers
 
         #region Helpers
         // Used for XSRF protection when adding external logins
+        /// <summary>
+        /// The XSRF key
+        /// </summary>
         private const string XsrfKey = "XsrfId";
 
+        /// <summary>
+        /// Gets the authentication manager.
+        /// </summary>
+        /// <value>The authentication manager.</value>
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -460,6 +600,10 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds the errors.
+        /// </summary>
+        /// <param name="result">The result.</param>
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -468,6 +612,11 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Redirects to local.
+        /// </summary>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>ActionResult.</returns>
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -477,13 +626,28 @@ namespace YorkiesVehicleHire.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Class ChallengeResult.
+        /// </summary>
+        /// <seealso cref="System.Web.Mvc.HttpUnauthorizedResult" />
         internal class ChallengeResult : HttpUnauthorizedResult
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ChallengeResult"/> class.
+            /// </summary>
+            /// <param name="provider">The provider.</param>
+            /// <param name="redirectUri">The redirect URI.</param>
             public ChallengeResult(string provider, string redirectUri)
                 : this(provider, redirectUri, null)
             {
             }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ChallengeResult"/> class.
+            /// </summary>
+            /// <param name="provider">The provider.</param>
+            /// <param name="redirectUri">The redirect URI.</param>
+            /// <param name="userId">The user identifier.</param>
             public ChallengeResult(string provider, string redirectUri, string userId)
             {
                 LoginProvider = provider;
@@ -491,10 +655,26 @@ namespace YorkiesVehicleHire.Controllers
                 UserId = userId;
             }
 
+            /// <summary>
+            /// Gets or sets the login provider.
+            /// </summary>
+            /// <value>The login provider.</value>
             public string LoginProvider { get; set; }
+            /// <summary>
+            /// Gets or sets the redirect URI.
+            /// </summary>
+            /// <value>The redirect URI.</value>
             public string RedirectUri { get; set; }
+            /// <summary>
+            /// Gets or sets the user identifier.
+            /// </summary>
+            /// <value>The user identifier.</value>
             public string UserId { get; set; }
 
+            /// <summary>
+            /// Enables processing of the result of an action method by a custom type that inherits from the <see cref="T:System.Web.Mvc.ActionResult" /> class.
+            /// </summary>
+            /// <param name="context">The context in which the result is executed. The context information includes the controller, HTTP content, request context, and route data.</param>
             public override void ExecuteResult(ControllerContext context)
             {
                 var properties = new AuthenticationProperties { RedirectUri = RedirectUri };

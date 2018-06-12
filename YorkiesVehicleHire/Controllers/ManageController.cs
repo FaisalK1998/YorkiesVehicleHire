@@ -1,5 +1,19 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : YorkiesVehicleHire
+// Author           : Faisal
+// Created          : 06-03-2018
+//
+// Last Modified By : Faisal
+// Last Modified On : 06-12-2018
+// ***********************************************************************
+// <copyright file="ManageController.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -11,22 +25,48 @@ using YorkiesVehicleHire.Models;
 
 namespace YorkiesVehicleHire.Controllers
 {
+    /// <summary>
+    /// Class ManageController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [Authorize]
     public class ManageController : Controller
     {
+        /// <summary>
+        /// The sign in manager
+        /// </summary>
         private ApplicationSignInManager _signInManager;
+        /// <summary>
+        /// The user manager
+        /// </summary>
         private ApplicationUserManager _userManager;
+        /// <summary>
+        /// The database
+        /// </summary>
+        private ApplicationDbContext db = new ApplicationDbContext();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManageController"/> class.
+        /// </summary>
         public ManageController()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManageController"/> class.
+        /// </summary>
+        /// <param name="userManager">The user manager.</param>
+        /// <param name="signInManager">The sign in manager.</param>
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
+        /// <summary>
+        /// Gets the sign in manager.
+        /// </summary>
+        /// <value>The sign in manager.</value>
         public ApplicationSignInManager SignInManager
         {
             get
@@ -39,6 +79,10 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets the user manager.
+        /// </summary>
+        /// <value>The user manager.</value>
         public ApplicationUserManager UserManager
         {
             get
@@ -53,6 +97,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/Index
+        /// <summary>
+        /// Indexes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -78,6 +127,11 @@ namespace YorkiesVehicleHire.Controllers
 
         // GET: /Manage/EditDetails
         //Retrieves the edit details page and passes the users current details through the model
+        /// <summary>
+        /// Edits the details.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> EditDetails(string id)
         {
             if (id == null)
@@ -88,6 +142,11 @@ namespace YorkiesVehicleHire.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Edits the details.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         //Retrieves the updated details throught model and updates the users details using model
         public async Task<ActionResult> EditDetails(ApplicationUser model)
@@ -116,6 +175,11 @@ namespace YorkiesVehicleHire.Controllers
 
         // GET: /Manage/RemoveLogin
         //Retrieves the remove login page and passes the users current details through the model
+        /// <summary>
+        /// Removes the login.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> RemoveLogin(string id)
         {
             if (id == null)
@@ -126,40 +190,41 @@ namespace YorkiesVehicleHire.Controllers
             return View(model);
         }
 
-        //
+        //Removes the user and all user details from the database 
         // POST: /Manage/RemoveLogin
+        /// <summary>
+        /// Removes the login.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RemoveLogin(ApplicationUser model)
+        public ActionResult RemoveLogin()
         {
-            if (ModelState.IsValid)
+            var id = User.Identity.GetUserId();
+            var users = db.Users.Find(id);
+
+            if (users == null)
             {
-                var user = await UserManager.FindByIdAsync(model.Id);
-                user.Email = model.Email;
-
-                var result = await UserManager.DeleteAsync(user);
-
-                //Returns the user to the homepage and displays a success message
-                if (result.Succeeded)
-                {
-                    ApplicationDbContext db = new ApplicationDbContext();
-                    db.Users.Remove(user);
-                    db.SaveChanges();
-
-                    this.AddNotification("Your Account Has Been Removed Successfully", NotificationType.SUCCESS);
-                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                    return RedirectToAction("Index", "Home");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
-            //If editing the users details fails returns the user to the edit details page and displays an error message 
-            this.AddNotification("Your Account Could Not Be Removed. Please Try Again Later", NotificationType.ERROR);
-            return View(model);
-        }
+            db.Users.Remove(users);
 
+            db.SaveChanges();
+            this.AddNotification("Your Account Has Been Removed Successfully", NotificationType.SUCCESS);
+
+            //Logs off the user
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Index", "Home");
+
+        }
 
         //
         // GET: /Manage/AddPhoneNumber
+        /// <summary>
+        /// Adds the phone number.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         public ActionResult AddPhoneNumber()
         {
             return View();
@@ -167,6 +232,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/AddPhoneNumber
+        /// <summary>
+        /// Adds the phone number.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
@@ -191,6 +261,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/EnableTwoFactorAuthentication
+        /// <summary>
+        /// Enables the two factor authentication.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EnableTwoFactorAuthentication()
@@ -206,6 +280,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/DisableTwoFactorAuthentication
+        /// <summary>
+        /// Disables the two factor authentication.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DisableTwoFactorAuthentication()
@@ -221,6 +299,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/VerifyPhoneNumber
+        /// <summary>
+        /// Verifies the phone number.
+        /// </summary>
+        /// <param name="phoneNumber">The phone number.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
@@ -230,6 +313,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/VerifyPhoneNumber
+        /// <summary>
+        /// Verifies the phone number.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
@@ -255,6 +343,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/RemovePhoneNumber
+        /// <summary>
+        /// Removes the phone number.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemovePhoneNumber()
@@ -274,6 +366,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/ChangePassword
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         public ActionResult ChangePassword()
         {
             return View();
@@ -281,6 +377,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/ChangePassword
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -305,6 +406,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/SetPassword
+        /// <summary>
+        /// Sets the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         public ActionResult SetPassword()
         {
             return View();
@@ -312,6 +417,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/SetPassword
+        /// <summary>
+        /// Sets the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
@@ -337,6 +447,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/ManageLogins
+        /// <summary>
+        /// Manages the logins.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -360,6 +475,11 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // POST: /Manage/LinkLogin
+        /// <summary>
+        /// Links the login.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <returns>ActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LinkLogin(string provider)
@@ -370,6 +490,10 @@ namespace YorkiesVehicleHire.Controllers
 
         //
         // GET: /Manage/LinkLoginCallback
+        /// <summary>
+        /// Links the login callback.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
@@ -381,6 +505,10 @@ namespace YorkiesVehicleHire.Controllers
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && _userManager != null)
@@ -392,10 +520,17 @@ namespace YorkiesVehicleHire.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
+        /// <summary>
+        /// The XSRF key
+        /// </summary>
         private const string XsrfKey = "XsrfId";
 
+        /// <summary>
+        /// Gets the authentication manager.
+        /// </summary>
+        /// <value>The authentication manager.</value>
         private IAuthenticationManager AuthenticationManager
         {
             get
@@ -404,6 +539,10 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds the errors.
+        /// </summary>
+        /// <param name="result">The result.</param>
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -412,6 +551,10 @@ namespace YorkiesVehicleHire.Controllers
             }
         }
 
+        /// <summary>
+        /// Determines whether this instance has password.
+        /// </summary>
+        /// <returns><c>true</c> if this instance has password; otherwise, <c>false</c>.</returns>
         private bool HasPassword()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -422,6 +565,10 @@ namespace YorkiesVehicleHire.Controllers
             return false;
         }
 
+        /// <summary>
+        /// Determines whether [has phone number].
+        /// </summary>
+        /// <returns><c>true</c> if [has phone number]; otherwise, <c>false</c>.</returns>
         private bool HasPhoneNumber()
         {
             var user = UserManager.FindById(User.Identity.GetUserId());
@@ -432,14 +579,38 @@ namespace YorkiesVehicleHire.Controllers
             return false;
         }
 
+        /// <summary>
+        /// Enum ManageMessageId
+        /// </summary>
         public enum ManageMessageId
         {
+            /// <summary>
+            /// The add phone success
+            /// </summary>
             AddPhoneSuccess,
+            /// <summary>
+            /// The change password success
+            /// </summary>
             ChangePasswordSuccess,
+            /// <summary>
+            /// The set two factor success
+            /// </summary>
             SetTwoFactorSuccess,
+            /// <summary>
+            /// The set password success
+            /// </summary>
             SetPasswordSuccess,
+            /// <summary>
+            /// The remove login success
+            /// </summary>
             RemoveLoginSuccess,
+            /// <summary>
+            /// The remove phone success
+            /// </summary>
             RemovePhoneSuccess,
+            /// <summary>
+            /// The error
+            /// </summary>
             Error
         }
 

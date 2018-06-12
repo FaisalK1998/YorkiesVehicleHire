@@ -5,40 +5,56 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@using (Html.BeginForm("RemoveLogin", "Manage", FormMethod.Post))
+@using (Html.BeginForm("RemoveLogin", "Manage"))
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>Remove Account</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <h4>Remove Account</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @*
         @Html.HiddenFor(model => model.Id)
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-    @Html.HiddenFor(model => model.UserName)
-    @Html.HiddenFor(model => model.AccessFailedCount)
-    @Html.HiddenFor(model => model.LockoutEnabled)
-    @Html.HiddenFor(model => model.LockoutEndDateUtc)
-    @Html.HiddenFor(model => model.TwoFactorEnabled)
-    @Html.HiddenFor(model => model.PhoneNumberConfirmed)
-    @Html.HiddenFor(model => model.SecurityStamp)
-    @Html.HiddenFor(model => model.PasswordHash)
-    @Html.HiddenFor(model => model.EmailConfirmed)
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <h5>Are you sure you want to delete your account?</h5>
-                <input type="submit" value="Delete" class="btn btn-danger" />
-            </div>
+    *@
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MobilePhoneNo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.MobilePhoneNo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.MobilePhoneNo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DrivingLicenceNo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DrivingLicenceNo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.DrivingLicenceNo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <h5>Are you sure you want to delete your account?</h5>
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </div>
+</div>
 }
 <div>
     @Html.ActionLink("Back", "Index")
